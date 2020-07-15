@@ -4,6 +4,10 @@ library(forecast)
 
 #Serie estacionaria
 x <- rnorm(1000) 
+
+#Obtenemos valor el estadistico de contraste, recordemos que el estadistico de contraste debe ser menor al lambda crítico para no rechazar que la serie sea estacionaria
+#Obtenemos el número de retrasos con los que esta correlacionado la serie
+#El p-value que indica la significancia, en este caso si el p-value es menos a .05 no se rechaza que la serie sea estacionaria
 adf.test(x) # Dickey Fuller Test
 
 
@@ -19,14 +23,16 @@ adf.test(nottem)
 
 
 #Serie no estacionaria
-y <- diffinv(x) 
+y <- diffinv(x) #calculamos la inversa de las diferencias de los elementos de x
 plot(y)
 adf.test(y)
 
 
 ### ACF and PACF (lag.max=numero maximo de retrasos, plot = F si no se quiere dibujar)
+#Autocorrelación del df NOTTEM, contiene datos de temperaturas
 
 acf(nottem, lag.max = 20, plot = T)
+
 pacf(nottem, lag.max =20, plot = T)
 
 ### ACF of white noise
