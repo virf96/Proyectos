@@ -1,0 +1,53 @@
+---
+title: "Serie de tiempo con data frame air passangers"
+output: html_notebook
+---
+
+
+```{r, include=FALSE}
+data <- AirPassengers
+```
+
+### Datos de serie de tiempo (Obserevamos que la frecuencia es mensual)
+```{r, echo=FALSE}
+data
+```
+
+### Observamos una tendencia creciente que podría no ser lineal, por lo cuál utilizaremos la descomposición multiplicativa más adelante
+```{r, echo=FALSE}
+plot(data, ylab="Número de pasajeros a tráves del tiempo", type="o", pch =20)
+```
+
+### Al hacer la prueba de **Dickey Fuller** para comprobar estacionalidad se acepta la estacionalidad de la serie de tiempo al observar que el p-value es menor que .05
+
+```{r, echo=FALSE}
+adf.test(data)
+```
+
+### Verificamos que la tendencia no es completamente lineal, además de que evidentemente existe una estacionalidad y podemos observar que la serie contiene mayor ruido en los periodos comprendidos a **1950-1954** y **1958-1960**
+```{r, echo=FALSE}
+plot(decompose(data, type = "multiplicative"))
+
+```
+ 
+
+```{r, include=FALSE}
+#Guardamos la descomposición de la serie por el método "decompose" para poder eztraer los componentes
+data.decompM <- decompose(data, type = "multiplicative")
+#Creamos una secuencia de números de 1 a 144
+t <- seq(1, 144, 1)
+#Ajustamos modelo lineal a la tendencia de la serie
+modelTrend <- lm(formula = data.decompM$trend ~ t)
+predT <- predict.lm(modelTrend, newdata = data.frame(t))
+
+```
+
+### Al observar un modelo lineal contra la tendencia podemos ver que el gráfico sufiere que el comportamiento es lineal aunque en algunos puntos están por debajo o por encima del modelo lineal 
+```{r, echo=FALSE}
+
+plot(data.decompM$trend[7:138] ~ t[7:138], ylab="T(t)", xlab="t",
+     type="p", pch=20, main = "Componente de tendencia: Modelado vs Observado")
+lines(predT, col="red")
+
+```
+
